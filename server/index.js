@@ -23,6 +23,9 @@ if (!existsSync(CONTENT_FILE)) {
 app.use(cors());
 app.use(express.json());
 
+// Serve static files from the client build
+app.use(express.static(join(__dirname, '../client/dist')));
+
 // Middleware to check password
 const authenticate = (req, res, next) => {
   const { password } = req.headers;
@@ -64,6 +67,11 @@ app.post('/api/verify', (req, res) => {
   } else {
     res.status(401).json({ valid: false });
   }
+});
+
+// Serve index.html for all other routes (client-side routing)
+app.get('*', (req, res) => {
+  res.sendFile(join(__dirname, '../client/dist/index.html'));
 });
 
 app.listen(PORT, () => {
